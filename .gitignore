@@ -1,0 +1,10 @@
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Node artifacts
+client/node_modules/
+client/.next/
+
+# Environment files
+client/.env.local

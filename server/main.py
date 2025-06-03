@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 import requests
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -17,11 +17,18 @@ import json
 import re
 
 def generate_response(prompt: str) -> str:
-    response = requests.post(
-        "http://localhost:11434/api/generate",
-        json={"model": "mistral", "prompt": prompt},
-        stream=True
-    )
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            json={"model": "mistral", "prompt": prompt},
+            stream=True,
+            timeout=30,
+        )
+    except requests.RequestException as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
+
+    if response.status_code >= 400:
+        raise HTTPException(status_code=502, detail="Language model request failed")
 
     final_text = ""
     for line in response.iter_lines():
