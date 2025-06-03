@@ -3,13 +3,7 @@
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import StatusToggleButton from "@/components/StatusToggleButton";
-import { XIcon } from "lucide-react";
-
-interface Subtask {
-  id: string;
-  title: string;
-  status: "Todo" | "In Progress" | "Done";
-}
+import { Subtask } from "@/context/PlanitContext";
 
 interface TaskBlockProps {
   id: string;
@@ -17,7 +11,14 @@ interface TaskBlockProps {
   subtasks?: Subtask[];
   notes?: string;
   status?: "Todo" | "In Progress" | "Done";
-  onUpdate?: (task: any) => void;
+  onUpdate?: (
+    task: {
+      title: string;
+      subtasks: Subtask[];
+      notes: string;
+      status: "Todo" | "In Progress" | "Done";
+    }
+  ) => void;
 }
 
 export default function TaskBlock({

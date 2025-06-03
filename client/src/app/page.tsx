@@ -9,10 +9,12 @@ export default function Home() {
   const router = useRouter();
   const { setTasks } = usePlanit();
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
   const handleGenerateDraft = async () => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/generate-tasks", {
+      const res = await fetch(`${API_URL}/generate-tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ goal }),

@@ -4,25 +4,13 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import TaskBlock from "@/components/TaskBlock";
 import { XIcon } from "lucide-react";
-
-interface Subtask {
-  id: string;
-  title: string;
-  status: "Todo" | "In Progress" | "Done";
-}
-
-interface TaskData {
-  id: string;
-  title: string;
-  subtasks: Subtask[];
-  notes: string;
-  status: "Todo" | "In Progress" | "Done";
-}
+import { usePlanit, TaskData } from "@/context/PlanitContext";
 
 export default function TaskBoard() {
-  const [tasks, setTasks] = useState<TaskData[]>([]);
+  const { tasks, setTasks } = usePlanit();
   const [loading, setLoading] = useState(false);
   const [inputGoal, setInputGoal] = useState("");
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const addNewTask = () => {
     setTasks((prev) => [
@@ -51,7 +39,7 @@ export default function TaskBoard() {
     if (!inputGoal.trim()) return;
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:8000/generate-tasks", {
+      const response = await fetch(`${API_URL}/generate-tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,7 +47,7 @@ export default function TaskBoard() {
         body: JSON.stringify({ goal: inputGoal }),
       });
       const data = await response.json();
-      const aiTasks = data.tasks.map((t: any) => ({
+      const aiTasks = data.tasks.map((t: { title: string; subtasks: string[] }) => ({
         id: uuidv4(),
         title: t.title,
         subtasks: t.subtasks.map((sub: string) => ({
